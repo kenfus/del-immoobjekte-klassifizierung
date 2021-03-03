@@ -25,11 +25,11 @@ import gc
 from joblib import Parallel, delayed
 
 
-
-class preprocessor:
+#Author: Kenfus @ Github
+class PreProcessor:
     """This class preprocesses Data to make it work better for Machine Learning.
     df: Dataframe to preprocess
-    y_var: Variable to predict for the regression
+    y_var: Variable to predict for the regression/classification
     cols_to_drop: Attributes which the class should drop.
     numbers_to_encode: Numbers which should be encoded. This class automatically encodes all object and categorical-types.
     method_to_encode: Method how to encode. ('onehot_encode' or 'label_encode')
@@ -38,6 +38,7 @@ class preprocessor:
     features_not_to_box_cox: If some Attributes should not be transformed with Boxcox.
     standardise_number: If numbers should be standardised (If robust_scaler == False, it will change numeric values into Z-scores.)
     robust_scaler: If numbers should be standardised with the robust-scaler.
+    verbose: how much feedback this class gives.
 
     Returns: Nothing, but Test and Train-Data can be called with preprocessor.X_test, preprocessor.y_test, preprocessor.X_train and preprocessor.y_train.
     """
@@ -47,25 +48,6 @@ class preprocessor:
         assert not numbers_to_onehot_encode, 'Please change "numbers_to_onehot_encode" to "numbers_to_encode", thx.'
         assert method_to_encode in ['onehot_encode', 'label_encode'], 'For method_to_encode, only "onehot_encode" or "label_encode" is accepted.'
         assert y_var, 'Please define a y_var!'
-
-        ### Fixed Parameter for Class:
-        self.str_na = 'No Value'
-        self.numeric_na = -9999
-
-        ### Drop some rows incase they are always empty (they do not exist in the Test-Set for Kaggle)
-        try:
-            df = df[df['TravelTimeMiv'].notna()].copy()
-        except:
-            pass
-        try:
-            df = df[df['StateShort'].notna()].copy()
-        except:
-            pass
-        try:
-            df = df[df['gde_area_settlement_percentage'].notna()].copy()
-        except:
-            pass
-        df.reset_index(inplace = True, drop=True)
         
         ###Save some parameters to class:
         self.y = df[y_var].copy()
@@ -78,6 +60,11 @@ class preprocessor:
         self.remove_skew_by_boxcox = remove_skew_by_boxcox
         self.robust_scaler = robust_scaler
         self.verbose = verbose
+
+        
+        ### Fixed Parameter for Class:
+        self.str_na = 'No Value'
+        self.numeric_na = -9999
 
 
         ### Drop Columns based on y_var and cols_to_drop
