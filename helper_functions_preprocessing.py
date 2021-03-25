@@ -36,7 +36,7 @@ class PreProcessor:
     test_frac: Fraction to create Test-Data with.
     remove_skew_by_boxcox: If data should be transformed via Boxcox-Transformation to make it normally-distributed.
     features_not_to_box_cox: If some Attributes should not be transformed with Boxcox.
-    standardise_number: If numbers should be standardised (If robust_scaler == False, it will change numeric values into Z-scores.)
+    standardise_number: If numbers should be standardised (If robust_scaler == False, it will change numeric values into Z-scores. If not, it will standardise Data with quantiles).
     robust_scaler: If numbers should be standardised with the robust-scaler.
     verbose: how much feedback this class gives.
 
@@ -261,10 +261,13 @@ class PreProcessor:
 
 
     def split_X_y(self, test_frac = 0.2):
-        self.X_test = self.X.sample(frac = test_frac, random_state = 42)
-        self.X_train = self.X.drop(index = self.X_test.index, axis = 0)
-        self.y_train = self.y.iloc[self.X_train.index]
-        self.y_test = self.y.iloc[self.X_test.index]
+        df = self.X.join(self.y)
+        test = df.groupby(df.columns[-1]).sample(frac = test_frac, random_state = 42)
+        train = df.drop(index = test.index, axis = 0)
+        self.y_train = train[df.columns[-1]]
+        self.y_test = test[df.columns[-1]]
+        self.X_train = train.drop(columns = df.columns[-1])
+        self.X_test = test.drop(columns = df.columns[-1])
 
 
     def encode_sample(self, _sample, test_data = False):
