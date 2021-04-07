@@ -154,7 +154,7 @@ class PreProcessor:
         self.obj_features = df_obj.columns
         
         # Fit for standard scaler:
-        df_num = self.X_train.select_dtypes(include = ['float32', 'float64'])
+        df_num = self.X_train.select_dtypes(include = ['float32', 'float64', 'int64'])
         self.std = df_num.std(axis=0).fillna(1)
         self.mean = df_num.mean(axis=0).fillna(0)
         self.median = df_num.median(axis=0).fillna(0)
@@ -276,10 +276,12 @@ class PreProcessor:
             sample = self.__drop_columns(sample).copy()
             sample = self.__cast_dtypes(sample).copy()
 
+        sample = self.__fillna(sample).copy()
+
         if self.standardise_number:
             sample = self.__standardise_df(sample).copy()
 
-        sample = self.__fillna(sample).copy()
+
         sample = self.__add_feature_is_zero(sample).copy()
 
         if self.remove_skew_by_boxcox:
@@ -296,10 +298,10 @@ class PreProcessor:
         self.split_X_y(test_frac = self.test_frac)
         self.__fit_df()
 
+        self.X_train = self.__fillna(self.X_train).copy()
+
         if self.standardise_number:
             self.X_train = self.__standardise_df(self.X_train).copy()
-
-        self.X_train = self.__fillna(self.X_train).copy()
         self.X_train = self.__add_feature_is_zero(self.X_train).copy()
         
         if self.remove_skew_by_boxcox:
