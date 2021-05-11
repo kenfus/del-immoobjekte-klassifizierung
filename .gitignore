@@ -2,4 +2,3 @@
 .vscode/*
 wandb/*
 __pycache__/*
-__pycache__/helper_functions_preprocessing.cpython-38.pyc
