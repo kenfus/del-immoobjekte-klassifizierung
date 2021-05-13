@@ -3,26 +3,14 @@ import numpy as np
 from pandas.api.types import is_object_dtype
 from collections import defaultdict
 
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 
 import sklearn
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 import sklearn.metrics
 
 # Stats
-from scipy.stats import skew, norm
+from scipy.stats import skew
 from scipy.special import boxcox1p
 from scipy.stats import boxcox_normmax
-
-# Reducer
-import time
-import gc
-from joblib import Parallel, delayed
 
 
 #Author: Kenfus @ Github
@@ -38,7 +26,13 @@ class PreProcessor:
     features_not_to_box_cox: If some Attributes should not be transformed with Boxcox.
     standardise_number: If numbers should be standardised (If robust_scaler == False, it will change numeric values into Z-scores. If not, it will standardise Data with quantiles).
     robust_scaler: If numbers should be standardised with the robust-scaler.
-    verbose: how much feedback this class gives.
+    verbose: how much feedback this class should give.
+
+    usage: 
+    1. Initalize the Class with your DataFrame and define which variable is to predict and adapt the Settings of this Class.
+    2. Do the preprocess with PreProcessor.preprocess()
+    3. Call the processed Data as following: PreProcessor.X_train, PreProcessor.X_test, PreProcessor.y_train, PreProcessor.y_test
+    4. Use the Data to train your Modell
 
     Returns: Nothing, but Test and Train-Data can be called with preprocessor.X_test, preprocessor.y_test, preprocessor.X_train and preprocessor.y_train.
     """
