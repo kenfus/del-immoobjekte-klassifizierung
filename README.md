@@ -29,6 +29,10 @@ Es handelt sich um ein MLP mit mehreren Hidden Layers. Die Struktur des Netzes w
 
 Somit wurde die Anzahl der hidden Layers und die Anfangsanzahl (vor dem Decay) durch Hyperparameter-Tuning gesucht.
 
+### Early Stopping
+
+Es hat "Early-Stopping" eingebaut. Das Trainieren wird unterbrochen, wenn sich die F1-Score für 10 Epochen auf dem Test-Set nicht verbessert.
+
 ## Hyperparameter-Tuning
 Das Hyperparameter-Tuning wurde mit Hilfe von [Weights and Biases](https://wandb.ai/) durchgeführt und deren "Sweep"-Methode [Bayesian Hyperparameter Optimization](https://wandb.ai/site/articles/bayesian-hyperparameter-optimization-a-primer). 
 
