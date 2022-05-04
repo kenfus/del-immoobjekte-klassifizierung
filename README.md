@@ -1,46 +1,43 @@
-# DEL - Mini Challenge 1
+# Deep Learning - Classification of Real Estate Objects
 ## Requirements 
-Es liegt eine requirements.txt dabei, mit der die verwendeten Packages installiert werden können:
+There is a requirements.txt included, which can be used to install the used packages:
 
-`pip install -r requirements.txt`
+`pip install -r requirements.txt`.
 
-Es soll aber darauf geachtet werden, dass das Trainieren möglichst auf einer GPU durchgeführt werden kann, da eine Epoche ca. 15 Sekunde auf einer RTX 3060Ti brauchte. 
+However, a GPU should be used if possible, as one epoch took around 15 seconds on an RTX 3060Ti. 
 
-## Daten
-Die Mini-Challenge benutzt die Daten aus der Challenge [3Da - Immobilienrechner](https://ds-spaces.technik.fhnw.ch/immobilienrechner/). 
-
-Kurz, es wurde mithilfe von vielen gemeinde-spezifischen Daten Wohnobjekte klassifiziert (Handelt sich dieses Objekt um eine Wohnung? Haus?). Wir hatten diese Aufgabe in der Mini-Challenge mit Hilfe eines Boosted Gradient Trees gelöst. Dies kann man auch im Notebook `main.ipynb` nachschauen gehen. Da haben wir eine Macro-F1 Score von 0.46 erreicht.
+## Data
+The data contains the type of the real estate (House, flat, villa..) and municipality-specific data. We had solved this task as part of the `Deep Learning` course at (FHNW)[www.fhnw.ch]. 
 
 ## EDA
-Eda wurde im Notebook `eda.ipynb` durchgeführt. 
+Eda was done in the notebook `eda.ipynb`. 
 
 ## Preprocessing
-Das Preprocessing kann in `helper_functions_preprocessing.py` gefunden werden. Darin findet man eine Python-Klasse, welche die gängisten Daten-Normalisierungen durchführt. Diese sind am Anfang vom Notebook `main.ipynb` genauer beschrieben.
+The preprocessing can be found as the class `PreProcessor` here: [helper_functions_preprocessing.py](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/helper_functions_preprocessing.py). In it you will find a Python class that preprocesses the data in ways needed for the MLP. These are described in more detail at the beginning of the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
 
-## Eigentliche Mini-Challenge 
-Die eigentliche Lösung der Mini-Challenge kann im Notebook `main.ipynb` gefunden werden. Sie wurde so aufgebaut, dass die möglichst der Aufgabenstellung definiert in `mini-challenges_SGDS_DEL_MC1.pdf` entspricht. Das Modell und wie es erstellt wurde kann in `main.ipynb` gefunden werden. 
+## Actual Mini-Challenge 
+The actual solution to the mini-challenge can be found in the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb) It has been constructed to correspond as closely as possible to the task defined in `mini-challenges_SGDS_DEL_MC1.pdf`. The model and how it was created can be found in [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb) 
 
-### Grobstruktur NN
-Es handelt sich um ein MLP mit mehreren Hidden Layers. Die Struktur des Netzes wurde auch durch Hyperparameter-Tuning gesucht. Pro Hidden Layer nimmt die Anzahl Neuronen mit folgender Formel ab:
-
-`current_dim = int(current_dim / e**((i+1)/nr_layers))` 
-
-`i` entspricht der Nummer des Hidden Layers (erstes Hidden Layer == 0, etc) und `nr_layers` der Anzahl der Hidden layers.
-
-Somit wurde die Anzahl der hidden Layers und die Anfangsanzahl (vor dem Decay) durch Hyperparameter-Tuning gesucht.
+### Rough structure NN
+This is an MLP with several hidden layers. The structure of the network was also searched by hyperparameter tuning. Per hidden layer, the number of neurons decreases.
 
 ### Early Stopping
+It has "early stopping" built in. Training is interrupted if the F1 score does not improve for 10 epochs on the test set.
 
-Es hat "Early-Stopping" eingebaut. Das Trainieren wird unterbrochen, wenn sich die F1-Score für 10 Epochen auf dem Test-Set nicht verbessert.
+## Hyperparameter Tuning
+Hyperparameter tuning was done using [Weights and Biases](https://wandb.ai/) and their "sweep" method [Bayesian Hyperparameter Optimization](https://wandb.ai/site/articles/bayesian-hyperparameter-optimization-a-primer). 
 
-## Hyperparameter-Tuning
-Das Hyperparameter-Tuning wurde mit Hilfe von [Weights and Biases](https://wandb.ai/) durchgeführt und deren "Sweep"-Methode [Bayesian Hyperparameter Optimization](https://wandb.ai/site/articles/bayesian-hyperparameter-optimization-a-primer). 
+The entire optimization can be looked up here: [vincenzo293/DEL-mini-challenge-1](https://wandb.ai/vincenzo293/DEL-mini-challenge-1?workspace=user-vincenzo293). However, this is explained in more detail in the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
 
-Die gesamte Optimierung kann hier nachgeschaut werden: [vincenzo293/DEL-mini-challenge-1](https://wandb.ai/vincenzo293/DEL-mini-challenge-1?workspace=user-vincenzo293). Dies wird im Notebook `main.ipynb` aber genauer erklärt.
+# Interesting things and discoveries
+## Difficult beginning
+It was interesting that I had an extremely bad start. For a long time I had a Macro-F1 score of 0.21-0.23. At some point I noticed that the class did not standardize all values correctly and it had an attribute which took values between 30'000-120'000. When I fixed this (standardize), my Macro-F1 score went up to 0.37-0.398.
 
-# Interessantes und Entdeckungen
-## Schwieriger Anfang
-Interessant war, dass ich am Anfang extrem schlecht unterwegs war. Ich hatte lange eine Macro-F1 Score von 0.21-0.23. Irgendwann hatte ich gemerkt, dass die Klasse nicht alle Werte korrekt standardisiert und es ein Attribut hatte, welcher Werte zwischen 30'000-120'000 annahm. Als ich dies in Ordnung gebracht habe (Standardisiert), stieg meine Macro-F1 Score auf 0.37-0.398.
+## Optimizer Adam could not handle the data / is set incorrectly
+With SGD I was able to train the NN well. With Adam my F1 score never got above 0.17, even with testing many different learning rates (0.00001-0.001) and hyperparameter. This can also be seen in more detail in the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
 
-## Optimizer Adam konnte nicht mit den Daten umgehen / ist falsch eingestellt
-Mit SGD konnte ich das NN gut trainieren. Mit Adam ist meine F1-Score nie über 0.17 gekommen, selbst mit testen von vielen verschiedenen Learning-Rates (0.00001-0.001) und Hyperparametern. Dies wird man auch im Notebook `main.ipynb` genauer sehen.
+## Conclusion
+In `Machine Learning Basics` for 4 ECTS at (FHNW)[www.fhnw.ch], we had to implemented the same task with a decision tree classifier (LightGBM) and it easily beat my MLP by reaching a score of 0.41 vs. 0.39.
+
+# Futher details
+Please have a look at [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
