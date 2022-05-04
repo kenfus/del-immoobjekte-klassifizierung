@@ -13,7 +13,7 @@ The data contains the type of the real estate (House, flat, villa..) and municip
 Eda was done in the notebook `eda.ipynb`. 
 
 ## Preprocessing
-The preprocessing can be found as the class `PreProcessor` here: [helper_functions_preprocessing.py](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/helper_functions_preprocessing.py). In it you will find a Python class that preprocesses the data in ways needed for the MLP. These are described in more detail at the beginning of the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
+The preprocessing can be found as the class `PreProcessor` here: [helper_functions_preprocessing.py](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/helper_functions_preprocessing.py). In it you will find a Python class that preprocesses tabular data in ways needed for the MLP. These are described in more detail at the beginning of the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb)
 
 ## Actual Mini-Challenge 
 The actual solution to the mini-challenge can be found in the notebook [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb) It has been constructed to correspond as closely as possible to the task defined in `mini-challenges_SGDS_DEL_MC1.pdf`. The model and how it was created can be found in [main.ipynb](https://github.com/kenfus/del-immoobjekte-klassifizierung/blob/master/main.ipynb) 
